@@ -51,8 +51,35 @@ import { Entity, Tile } from '../game.types';
         <div class="absolute w-[60px] h-[60px] flex items-center justify-center z-20 transition-all duration-200"
              [style.left.px]="5 * 60"
              [style.top.px]="5 * 60">
-             <div class="absolute bottom-1 w-10 h-4 bg-black/50 rounded-[50%] blur-md"></div>
-             <div class="text-4xl filter drop-shadow-xl animate-bounce" [style.color]="player().color">
+             
+             <!-- Visual Auras -->
+             <div class="absolute -inset-4 pointer-events-none z-0">
+                @for (tag of activeTags(); track tag) {
+                    @if (tag === 'fire') {
+                        <div class="absolute inset-0 rounded-full bg-orange-500/20 blur-lg animate-pulse"></div>
+                        <div class="absolute -inset-2 rounded-full border-2 border-orange-500/40 border-dashed animate-spin-slow"></div>
+                    }
+                    @if (tag === 'ice') {
+                        <div class="absolute inset-0 rounded-full bg-cyan-500/20 blur-lg"></div>
+                        <div class="absolute -top-4 left-0 animate-bounce text-cyan-300 text-xs">❄️</div>
+                        <div class="absolute -bottom-2 right-0 animate-bounce text-cyan-300 text-xs delay-150">❄️</div>
+                        <div class="absolute inset-0 border border-cyan-400/40 rounded-full animate-ping opacity-20"></div>
+                    }
+                    @if (tag === 'lightning') {
+                        <div class="absolute inset-0 rounded-full border-4 border-yellow-300/50 animate-pulse"></div>
+                        <div class="absolute -inset-1 bg-yellow-400/10 blur-md"></div>
+                    }
+                    @if (tag === 'poison') {
+                        <div class="absolute inset-0 rounded-full bg-green-600/30 blur-xl animate-pulse"></div>
+                        <div class="absolute inset-0 flex items-center justify-center overflow-hidden">
+                             <div class="w-full h-full bg-[radial-gradient(circle,_#22c55e_10%,_transparent_20%)] bg-[length:10px_10px] opacity-50 animate-pulse"></div>
+                        </div>
+                    }
+                }
+             </div>
+
+             <div class="absolute bottom-1 w-10 h-4 bg-black/50 rounded-[50%] blur-md z-10"></div>
+             <div class="text-4xl filter drop-shadow-xl animate-bounce z-20" [style.color]="player().color">
                 {{ player().symbol }}
              </div>
         </div>
@@ -72,7 +99,13 @@ import { Entity, Tile } from '../game.types';
     </div>
   `,
   styles: [`
-    /* Additional inline styles logic if needed */
+    .animate-spin-slow {
+        animation: spin 4s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
   `]
 })
 export class GameBoardComponent {
@@ -82,6 +115,9 @@ export class GameBoardComponent {
   player = this.game.player;
   center = computed(() => ({ x: this.player().x, y: this.player().y }));
   boardSize = computed(() => this.game.CHUNK_SIZE * 60);
+
+  // Active visual effects on player derived from totalStats which aggregates equipment
+  activeTags = computed(() => this.game.totalStats().tags);
 
   // Entities relative to player view
   visibleEntities = this.game.entities;

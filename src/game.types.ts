@@ -1,5 +1,6 @@
 export type ItemType = 'weapon' | 'armor' | 'helm' | 'accessory' | 'consumable';
 export type Rarity = 'common' | 'rare' | 'epic' | 'legendary';
+export type AiType = 'hunter' | 'guardian'; // hunter = chases far, guardian = returns to spawn
 
 export interface Stats {
   hp: number;
@@ -8,6 +9,12 @@ export interface Stats {
   def: number;
   exp: number;
   level: number;
+  // Special Attributes
+  critRate?: number; // Percentage (0-100)
+  critDmg?: number; // Percentage (base 150%)
+  dodge?: number; // Percentage (0-100)
+  lifesteal?: number; // Percentage of damage returned as HP
+  attackSpeed?: number; // 100 is base. 200 = 2x chance to hit.
 }
 
 export interface Item {
@@ -19,6 +26,8 @@ export interface Item {
   value: number;
   description: string;
   color: string;
+  effect?: 'teleport' | 'xp' | 'full_heal'; // Special effects for consumables
+  visualTags?: string[]; // e.g., 'fire', 'ice', 'poison', 'lightning'
 }
 
 export interface Equipment {
@@ -38,6 +47,11 @@ export interface Entity {
   symbol: string; // Emoji or char
   color: string; // Hex
   equipment?: Equipment; // Monsters can have loot/gear
+  activeTags?: string[]; // Visual auras active on entity
+  
+  // AI Properties
+  ai?: AiType;
+  spawnOrigin?: { x: number, y: number };
 }
 
 export interface Tile {
@@ -49,6 +63,6 @@ export interface Tile {
 
 export interface GameLog {
   message: string;
-  type: 'info' | 'combat' | 'loot' | 'level';
+  type: 'info' | 'combat' | 'loot' | 'level' | 'crit';
   timestamp: number;
 }

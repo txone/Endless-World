@@ -12,7 +12,9 @@
                     [class.text-blue-300]="log.type === 'info'"
                     [class.text-red-400]="log.type === 'combat'"
                     [class.text-yellow-400]="log.type === 'loot'"
-                    [class.text-green-400]="log.type === 'level'">
+                    [class.text-green-400]="log.type === 'level'"
+                    [class.text-orange-500]="log.type === 'crit'"
+                    [class.font-bold]="log.type === 'crit'">
                    <span class="opacity-50">[{{ log.timestamp | date:'mm:ss' }}]</span> {{ log.message }}
                </div>
             }
